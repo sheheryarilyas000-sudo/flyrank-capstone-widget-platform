@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer External Website — Embed Test</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --success: #16a34a;
+            --danger: #dc2626;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1e40af;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            margin-bottom: 0.75rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            ring: 2px solid #bfdbfe;
+        }
+
+        /* Anti-spam honeypot field — invisible to real human users */
+        .hp-field {
+            display: none !important;
+            visibility: hidden !important;
+            position: absolute !important;
+            left: -9999px !important;
+        }
+
+        button {
+            width: 100%;
+            background: var(--primary);
+            color: #ffffff;
+            font-weight: 600;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+        }
+
+        .status-box {
+            display: none;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .status-success {
+            display: block;
+            background: #dcfce7;
+            color: var(--success);
+            border: 1px solid #bbf7d0;
+        }
+
+        .status-error {
+            display: block;
+            background: #fee2e2;
+            color: var(--danger);
+            border: 1px solid #fecaca;
+        }
+
+        pre {
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            margin-top: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <span class="badge">Simulated External Website</span>
+            <h1>Acme Corp Marketing Landing</h1>
+            <p class="subtitle">This page simulates a customer's external origin site embedding the Flyrank widget platform script tag.</p>
+        </div>
+
+        <div class="card">
+            <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Lead Capture Form</h2>
+            <form id="leadCaptureForm">
+                <div class="form-group">
+                    <label for="widgetIdInput">Target Widget ID</label>
+                    <input type="text" id="widgetIdInput" placeholder="Enter active Widget UUID..." value="value="ff428c2c-2da1-4c71-a69a-72fba8ea5219" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" placeholder="Jane Doe" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Work Email</label>
+                    <input type="email" id="email" placeholder="jane@example.com" required>
+                </div>
+
+                <!-- Honeypot trap: Bots will fill this, humans will never see it -->
+                <div class="form-group hp-field">
+                    <label for="website">Website (Leave Empty)</label>
+                    <input type="text" id="honeypot" name="honeypot" tabindex="-1" autocomplete="off">
+                </div>
+
+                <button type="submit" id="submitBtn">Submit Lead</button>
+            </form>
+
+            <div id="statusBox" class="status-box"></div>
+        </div>
+
+        <div class="card">
+            <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">Embed Tag Verification</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">
+                The embed bundle script tag below is loaded dynamically from the backend platform API:
+            </p>
+            <pre><code>&lt;script src="http://localhost:8000/widget.js?id=ff428c2c-2da1-4c71-a69a-72fba8ea5219"&gt;&lt;/script&gt;</code></pre>
+        </div>
+    </div>
+
+    <!-- The exact required embed script tag -->
+    <script src="http://localhost:8000/widget.js?id=ff428c2c-2da1-4c71-a69a-72fba8ea5219"></script>
+
+    <script>
+        // Form submission handler simulating the embed widget's fetch POST
+        const form = document.getElementById("leadCaptureForm");
+        const statusBox = document.getElementById("statusBox");
+        const submitBtn = document.getElementById("submitBtn");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const widgetId = document.getElementById("widgetIdInput").value.trim();
+            const name = document.getElementById("fullName").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const honeypot = document.getElementById("honeypot").value;
+
+            statusBox.className = "status-box";
+            statusBox.style.display = "none";
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Submitting...";
+
+            try {
+                // Post to the Flyrank public submission endpoint
+                const endpoint = `http://localhost:8000/submit/${widgetId}`;
+                const response = await fetch(endpoint, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        data: {
+                            full_name: name,
+                            email: email
+                        },
+                        honeypot: honeypot
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    statusBox.className = "status-box status-success";
+                    statusBox.innerHTML = `<strong>Success!</strong> Form submitted successfully (HTTP ${response.status}).`;
+                } else {
+                    statusBox.className = "status-box status-error";
+                    statusBox.innerHTML = `<strong>Submission Rejected:</strong> ${result.error || response.statusText} (HTTP ${response.status})`;
+                }
+            } catch (err) {
+                statusBox.className = "status-box status-error";
+                statusBox.innerHTML = `<strong>Network / CORS Error:</strong> ${err.message}. Ensure the FastAPI server is running at http://localhost:8000.`;
+            } finally {
+                statusBox.style.display = "block";
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Submit Lead";
+            }
+        });
+    </script>
+</body>
+</html>

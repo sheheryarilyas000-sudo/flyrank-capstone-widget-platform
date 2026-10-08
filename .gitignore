@@ -1,0 +1,48 @@
+# --- Environment & Secrets ---
+.env
+*.env.local
+
+# --- SQLite database file (auto-generated on startup) ---
+database.db
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# --- Testing ---
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# --- IDEs ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Docker ---
+# Keep docker-compose.yml tracked; ignore override files
+docker-compose.override.yml
+
+# --- Alembic ---
+# Keep migrations tracked; ignore local env cache
+alembic/versions/__pycache__/
