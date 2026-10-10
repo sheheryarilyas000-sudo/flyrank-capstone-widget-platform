@@ -31,14 +31,14 @@ async def seed_database() -> tuple[Tenant, Widget]:
 
     async with AsyncSessionLocal() as session:
         # 2. Check or create Tenant
-        stmt = select(Tenant).where(Tenant.name == "Acme Corporation")
+        stmt = select(Tenant).where(Tenant.name == "Demo Client")
         res = await session.execute(stmt)
         tenant = res.scalar_one_or_none()
 
         if not tenant:
-            api_key = f"flk_live_{secrets.token_hex(16)}"
+            api_key = f"nova_live_{secrets.token_hex(16)}"
             tenant = Tenant(
-                name="Acme Corporation",
+                name="Demo Client",
                 api_key=api_key,
                 is_active=True,
             )
@@ -57,11 +57,13 @@ async def seed_database() -> tuple[Tenant, Widget]:
         if not widget:
             widget = Widget(
                 tenant_id=tenant.id,
-                name="Acme Main Lead Capture Form",
+                name="Nova Leads Main Lead Capture Form",
                 config={
-                    "title": "Join Acme Waitlist",
-                    "submit_label": "Request Early Access",
-                    "success_message": "Thanks! You're on the waitlist.",
+                    "title": "Get Early Access",
+                    "subtitle": "Sign up today to get 20% off your first 3 months",
+                    "offer_text": "Sign up today to get 20% off your first 3 months",
+                    "submit_label": "Claim Offer & Join",
+                    "success_message": "Thanks! You're on the priority waitlist.",
                     "fields": [
                         {
                             "name": "full_name",
@@ -75,7 +77,39 @@ async def seed_database() -> tuple[Tenant, Widget]:
                             "type": "email",
                             "label": "Work Email",
                             "required": True,
-                            "placeholder": "jane@example.com",
+                            "placeholder": "jane@company.com",
+                        },
+                        {
+                            "name": "phone",
+                            "type": "tel",
+                            "label": "Phone Number",
+                            "required": False,
+                            "placeholder": "+1 (555) 000-0000",
+                        },
+                        {
+                            "name": "company",
+                            "type": "text",
+                            "label": "Company Name",
+                            "required": False,
+                            "placeholder": "Demo Client Inc",
+                        },
+                        {
+                            "name": "service",
+                            "type": "select",
+                            "label": "Required Service",
+                            "required": False,
+                            "options": [
+                                "Enterprise SaaS",
+                                "Growth Consulting",
+                                "Custom Integration",
+                            ],
+                        },
+                        {
+                            "name": "message",
+                            "type": "textarea",
+                            "label": "Project Details",
+                            "required": False,
+                            "placeholder": "Tell us about your requirements...",
                         },
                     ],
                 },
@@ -107,7 +141,7 @@ def update_test_page(widget_id: str) -> bool:
         content,
     )
     content = re.sub(
-        r'value="[0-9a-fA-F\-]{36}|YOUR_WIDGET_ID"',
+        r'value="([0-9a-fA-F\-]{36}|YOUR_WIDGET_ID)"',
         f'value="{widget_id}"',
         content,
     )
@@ -118,7 +152,7 @@ def update_test_page(widget_id: str) -> bool:
 
 async def main() -> None:
     print("=" * 65)
-    print("  Flyrank Widget Platform — Database Seeder & Test Setup")
+    print("  Nova Leads Platform -- Database Seeder & Test Setup")
     print("=" * 65)
 
     try:
@@ -129,16 +163,16 @@ async def main() -> None:
     # Update test_site/index.html with the active widget ID
     updated_html = update_test_page(str(widget.id))
 
-    print("\n[✓] Database initialization complete.")
+    print("\n[+] Database initialization complete.")
     if created_t:
-        print("    - Created new Tenant: Acme Corporation")
+        print("    - Created new Tenant: Demo Client")
     else:
-        print("    - Found existing Tenant: Acme Corporation")
+        print("    - Found existing Tenant: Demo Client")
 
     if created_w:
-        print("    - Created new Widget: Acme Main Lead Capture Form")
+        print("    - Created new Widget: Nova Leads Main Lead Capture Form")
     else:
-        print("    - Found existing Widget: Acme Main Lead Capture Form")
+        print("    - Found existing Widget: Nova Leads Main Lead Capture Form")
 
     if updated_html:
         print("    - Updated test_site/index.html with the Widget ID")

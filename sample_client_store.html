@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulseForge Systems — Enterprise Cloud & AI Engineering</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            300: '#a5b4fc',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                            950: '#1e1b4b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-glow {
+            background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
+        }
+        .widget-sandbox-border {
+            background-image: repeating-linear-gradient(0deg, #cbd5e1, #cbd5e1 10px, transparent 10px, transparent 20px),
+                              repeating-linear-gradient(90deg, #cbd5e1, #cbd5e1 10px, transparent 10px, transparent 20px),
+                              repeating-linear-gradient(180deg, #cbd5e1, #cbd5e1 10px, transparent 10px, transparent 20px),
+                              repeating-linear-gradient(270deg, #cbd5e1, #cbd5e1 10px, transparent 10px, transparent 20px);
+            background-size: 2px 100%, 100% 2px, 2px 100%, 100% 2px;
+            background-position: 0 0, 0 0, 100% 0, 0 100%;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-brand-500 selection:text-white min-h-screen flex flex-col justify-between">
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-gradient-to-r from-brand-900/60 via-indigo-900/40 to-slate-900 border-b border-white/10 px-4 py-2.5 text-center text-xs font-medium text-slate-300 flex items-center justify-center gap-2">
+        <span class="px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-300 font-semibold border border-brand-500/30 text-[10px] tracking-wide uppercase">New</span>
+        <span>Simulated Client Store &amp; Agency Portal &bull; Cross-Origin Embed Testing Environment</span>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-xl border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-cyan-400 p-0.5 shadow-lg shadow-brand-500/20 group-hover:scale-105 transition duration-200">
+                    <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+                        <svg class="w-5 h-5 text-brand-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-bold text-lg text-white tracking-tight leading-none group-hover:text-brand-300 transition">PulseForge</span>
+                    <span class="text-[10px] font-mono text-slate-400 uppercase tracking-widest mt-0.5">Systems &bull; Studio</span>
+                </div>
+            </a>
+
+            <!-- Nav Links -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
+                <a href="#services" class="hover:text-white transition">Services</a>
+                <a href="#solutions" class="hover:text-white transition">Solutions</a>
+                <a href="#case-studies" class="hover:text-white transition">Case Studies</a>
+                <a href="#embed-section" class="text-brand-400 hover:text-brand-300 font-semibold flex items-center gap-1.5 transition">
+                    <span class="w-2 h-2 rounded-full bg-brand-400 animate-pulse"></span>
+                    Contact / Embed Form
+                </a>
+            </nav>
+
+            <!-- Header Action Button -->
+            <div class="flex items-center gap-3">
+                <a href="#embed-section" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-brand-600/30 transition duration-150">
+                    Get in Touch
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden pt-20 pb-16 lg:pt-28 lg:pb-24 gradient-glow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-slate-300 mb-8 backdrop-blur-md">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span class="font-mono text-slate-400">Client Host Domain:</span>
+                <span class="text-slate-200 font-semibold" id="clientOriginDisplay">external-client.com</span>
+            </div>
+
+            <!-- Main Heading -->
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1.1] max-w-4xl mx-auto">
+                Next-Gen Cloud Architecture &amp; <span class="bg-clip-text text-transparent bg-gradient-to-r from-brand-400 via-indigo-300 to-cyan-400">Autonomous AI</span>
+            </h1>
+
+            <!-- Subtitle -->
+            <p class="mt-6 text-base sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                PulseForge partners with modern enterprises to design, scale, and automate high-throughput cloud platforms with sub-millisecond reliability.
+            </p>
+
+            <!-- CTA Row -->
+            <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+                <a href="#embed-section" class="px-7 py-3.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-sm shadow-xl shadow-brand-600/25 transition">
+                    Request Architecture Proposal →
+                </a>
+                <a href="#services" class="px-7 py-3.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white font-bold text-sm border border-white/10 transition">
+                    Explore Capabilities
+                </a>
+            </div>
+
+            <!-- Metrics Counter -->
+            <div class="mt-16 pt-12 border-t border-white/10 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+                <div>
+                    <div class="text-2xl sm:text-3xl font-extrabold text-white font-mono">$120M+</div>
+                    <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider">Revenue Delivered</div>
+                </div>
+                <div>
+                    <div class="text-2xl sm:text-3xl font-extrabold text-white font-mono">99.99%</div>
+                    <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider">Production SLA</div>
+                </div>
+                <div>
+                    <div class="text-2xl sm:text-3xl font-extrabold text-white font-mono">&lt; 45ms</div>
+                    <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider">Global P99 Latency</div>
+                </div>
+                <div>
+                    <div class="text-2xl sm:text-3xl font-extrabold text-white font-mono">4.9 / 5</div>
+                    <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider">Enterprise CSAT</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Overview Section -->
+    <section id="services" class="py-16 bg-slate-900/50 border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-14">
+                <h2 class="text-xs uppercase tracking-widest text-brand-400 font-bold mb-2">Our Capabilities</h2>
+                <h3 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">Full-Stack Cloud Engineering</h3>
+                <p class="text-sm text-slate-400 mt-3">From serverless distributed systems to fine-tuned autonomous workflow models.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-brand-500/50 transition group">
+                    <div class="w-12 h-12 rounded-xl bg-brand-500/10 text-brand-400 flex items-center justify-center font-bold mb-5 group-hover:scale-110 transition">
+                        ⚡
+                    </div>
+                    <h4 class="text-lg font-bold text-white mb-2">Serverless Cloud Scaling</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">Zero-downtime serverless architecture deployments on AWS, GCP, and Vercel with automated multi-region replication.</p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-brand-500/50 transition group">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-bold mb-5 group-hover:scale-110 transition">
+                        🤖
+                    </div>
+                    <h4 class="text-lg font-bold text-white mb-2">Autonomous Agent Pipelines</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">Custom LLM orchestrators that process incoming inbound inquiries, enrich CRM records, and automate client booking.</p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-brand-500/50 transition group">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold mb-5 group-hover:scale-110 transition">
+                        🛡️
+                    </div>
+                    <h4 class="text-lg font-bold text-white mb-2">Multi-Tenant Zero Trust</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">Enterprise SOC2-ready database tenancy, cryptographic key rotation, and HMAC-verified webhook delivery.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- PRIMARY EMBED TEST SECTION: NOVA LEADS WIDGET SANDBOX                 -->
+    <!-- ===================================================================== -->
+    <section id="embed-section" class="py-20 bg-slate-950 relative">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Section Header -->
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold uppercase tracking-wider mb-3">
+                    <span class="w-2 h-2 rounded-full bg-brand-400 animate-ping"></span>
+                    Live Embed Integration
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Request an Engineering Consultation</h2>
+                <p class="text-sm text-slate-400 mt-2 max-w-xl mx-auto">
+                    Fill out the form below to connect with a senior solutions architect within 1 business day.
+                </p>
+            </div>
+
+            <!-- Testing Control Panel: Lets user test ANY widget code dynamically without editing HTML -->
+            <div class="mb-8 p-5 rounded-2xl bg-slate-900 border border-white/10 shadow-xl">
+                <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                        <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider">Nova Leads Embed Tester Panel</h3>
+                    </div>
+                    <span class="text-[11px] font-mono text-slate-400">Client Integration Mockup</span>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="flex flex-col sm:flex-row gap-2.5">
+                        <input type="text" id="widgetCodeInput" placeholder="Paste your Widget ID or &lt;script src=&quot;.../widget.js&quot; data-widget-id=&quot;...&quot;&gt;&lt;/script&gt;" class="flex-1 px-3.5 py-2.5 text-xs bg-slate-950 border border-white/20 rounded-xl text-slate-100 placeholder-slate-500 font-mono outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition">
+                        <button type="button" onclick="injectCustomWidgetCode()" class="px-5 py-2.5 bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold rounded-xl shadow transition shrink-0">
+                            Load Widget Here
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between text-[11px] text-slate-400">
+                        <span>Tip: Copy the snippet from your <strong>Nova Leads Dashboard</strong> (&rarr; Widgets &rarr; Get Embed Code).</span>
+                        <button type="button" onclick="loadDefaultPlatformWidget()" class="text-brand-400 hover:text-brand-300 font-semibold underline decoration-dotted transition">
+                            Load Server Active Widget
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================================================================= -->
+            <!-- 🎯 THE DEDICATED WIDGET MOUNTING AREA                            -->
+            <!-- ================================================================= -->
+            <div id="embedContainerWrapper" class="relative rounded-3xl bg-slate-900/40 border border-white/10 p-6 sm:p-10 shadow-2xl backdrop-blur-xl">
+                
+                <!-- Placeholder banner shown when no widget is loaded yet -->
+                <div id="embedPlaceholderBanner" class="widget-sandbox-border rounded-2xl p-10 sm:p-14 text-center bg-slate-950/60">
+                    <div class="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 text-brand-400 flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner">
+                        📋
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold text-white tracking-tight">Paste your Nova Leads Widget Code Here</h3>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-2 max-w-md mx-auto">
+                        This mockup container acts as the host client page. Paste your embed snippet in the panel above or include the script tag directly before the closing body.
+                    </p>
+                    <div class="mt-6 inline-block font-mono text-[11px] text-slate-300 bg-slate-900 px-4 py-2.5 rounded-xl border border-white/10 shadow-sm text-left">
+                        &lt;script src="<span class="text-brand-300" id="suggestedScriptUrl">https://novaleads.cloud/widget.js</span>" data-widget-id="<span class="text-cyan-300">YOUR_WIDGET_ID</span>" async&gt;&lt;/script&gt;
+                    </div>
+                </div>
+
+                <!-- Live Widget Mounting Target (Standard Nova Leads Containers) -->
+                <div id="nova-leads-widget" class="mt-2"></div>
+                <div id="leadnova-widget"></div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-white/10 py-12 text-slate-400 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-3">
+                <div class="w-6 h-6 rounded-lg bg-brand-600 flex items-center justify-center text-white font-bold text-xs">
+                    P
+                </div>
+                <span class="font-bold text-slate-200">PulseForge Systems</span>
+                <span class="text-slate-600">|</span>
+                <span>Standalone Client Website Simulation</span>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <a href="/dashboard/" target="_blank" class="text-brand-400 hover:text-brand-300 font-semibold transition">
+                    Open Nova Leads Dashboard →
+                </a>
+                <span>&copy; 2026 PulseForge Systems Inc.</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===================================================================== -->
+    <!-- EMBED INJECTION & DIAGNOSTIC LOGIC                                    -->
+    <!-- ===================================================================== -->
+    <script>
+        // Resolve dynamic origin
+        const currentOrigin = window.location.protocol === 'file:' 
+            ? 'http://localhost:8000' 
+            : (window.location.origin || 'http://localhost:8000');
+
+        document.getElementById('clientOriginDisplay').textContent = window.location.host || 'localhost (Client Mockup)';
+        document.getElementById('suggestedScriptUrl').textContent = `${currentOrigin}/widget.js`;
+
+        // Function: Inject user's pasted widget code dynamically
+        function injectCustomWidgetCode() {
+            const raw = document.getElementById('widgetCodeInput').value.trim();
+            if (!raw) {
+                alert("Please paste a Widget ID or embed <script> tag first.");
+                return;
+            }
+
+            // Extract widget ID (either raw UUID or data-widget-id / id query param)
+            let widgetId = null;
+            const uuidMatch = raw.match(/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/);
+            if (uuidMatch) {
+                widgetId = uuidMatch[0];
+            }
+
+            // Extract src if full script tag was pasted
+            let scriptSrc = `${currentOrigin}/widget.js`;
+            const srcMatch = raw.match(/src=["']([^"']+)["']/);
+            if (srcMatch) {
+                scriptSrc = srcMatch[1];
+            }
+
+            if (!widgetId) {
+                alert("Could not extract a valid Widget UUID from the input. Please ensure it contains a 36-character UUID.");
+                return;
+            }
+
+            mountWidget(scriptSrc, widgetId);
+        }
+
+        // Mount the widget script into the DOM
+        function mountWidget(src, widgetId) {
+            // Hide the placeholder banner
+            const banner = document.getElementById('embedPlaceholderBanner');
+            if (banner) banner.classList.add('hidden');
+
+            // Clean previous widget elements
+            const container = document.getElementById('nova-leads-widget');
+            if (container) container.innerHTML = '';
+            const fallback = document.getElementById('leadnova-widget');
+            if (fallback) fallback.innerHTML = '';
+
+            // Remove any previously injected test scripts
+            const oldScript = document.getElementById('dynamicClientTestScript');
+            if (oldScript) oldScript.remove();
+
+            // Create and inject the live script tag
+            const s = document.createElement('script');
+            s.id = 'dynamicClientTestScript';
+            s.src = src.includes('?') ? src : `${src}?id=${widgetId}`;
+            s.setAttribute('data-widget-id', widgetId);
+            s.async = true;
+            document.body.appendChild(s);
+
+            console.log(`[PulseForge Client Store] Injected widget script: ${s.src} (data-widget-id: ${widgetId})`);
+        }
+
+        // Auto-fetch latest active widget from backend if served on the same server
+        async function loadDefaultPlatformWidget() {
+            try {
+                const res = await fetch(`${currentOrigin}/api/widgets/active/latest`).catch(() => null);
+                // If special endpoint doesn't exist, try getting stats/widgets or prompt user
+                if (res && res.ok) {
+                    const data = await res.json();
+                    if (data && data.id) {
+                        document.getElementById('widgetCodeInput').value = data.id;
+                        mountWidget(`${currentOrigin}/widget.js`, data.id);
+                        return;
+                    }
+                }
+            } catch (e) {}
+
+            // Prompt user with instructions
+            const sampleId = prompt("Enter active Widget ID to test live (from Nova Leads Dashboard):");
+            if (sampleId && sampleId.trim()) {
+                const cleaned = sampleId.trim();
+                document.getElementById('widgetCodeInput').value = cleaned;
+                mountWidget(`${currentOrigin}/widget.js`, cleaned);
+            }
+        }
+    </script>
+</body>
+</html>

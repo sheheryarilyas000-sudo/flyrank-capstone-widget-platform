@@ -1,4 +1,4 @@
-# Flyrank — Embeddable Widget & Lead-Capture Platform
+# Nova Leads — Embeddable Widget & Lead-Capture Platform
 
 > A production-hardened B2B SaaS backend that lets customers create embeddable signup-form widgets and install them on any external website via a single `<script>` tag.
 
@@ -19,12 +19,12 @@
 
 ## Project Overview
 
-Flyrank Widget Platform provides an end-to-end embeddable lead-capture infrastructure:
+Nova Leads provides an end-to-end embeddable lead-capture infrastructure:
 
 - **Embed Delivery**: Delivers `<script>` loader bundles and widget configuration JSON with HTTP caching headers (`Cache-Control`).
 - **Hardened Ingestion**: Ingests submissions from third-party cross-origin domains with full CORS preflight support, IP rate limiting, anti-spam honeypot detection, and non-blocking geo-location enrichments.
 - **Multi-Tenant Isolation**: Customers (tenants) authenticate using an API key (`X-Api-Key`). All queries and analytics strictly filter by `tenant_id`.
-- **Zero-Dollar Tech Stack**: Pure Python (FastAPI), SQLite (`aiosqlite`) via SQLAlchemy 2.0 async engine, and Vanilla HTML/JS frontend test site. No Docker required.
+- **Hybrid Local & Cloud Stack**: Local SQLite (`aiosqlite`) via SQLAlchemy 2.0 async engine for $0 offline development, plus Serverless PostgreSQL (`DATABASE_URL`, e.g., Supabase / Neon) and Vercel serverless deployment support. No Docker required.
 
 ---
 
@@ -121,7 +121,7 @@ Open [`test_site/index.html`](test_site/index.html) directly in any web browser.
 ## Project Structure
 
 ```
-flyrank-capstone-widget-platform/
+nova-leads-widget-platform/
 ├── app/
 │   ├── main.py                  # FastAPI entry point, CORS & middleware wiring
 │   ├── config.py                # App configuration (Pydantic BaseSettings)
@@ -145,7 +145,8 @@ flyrank-capstone-widget-platform/
 │       ├── auth.py              # X-Api-Key tenant authentication dependency
 │       ├── geo.py               # Two-provider Geo-IP fallback chain (2s timeout)
 │       ├── limiter.py           # slowapi rate limiter singleton
-│       └── side_effects.py      # Isolated post-save notification stub
+├── dashboard/
+│   └── index.html               # Single Page Application (SPA) Tenant Dashboard
 ├── test_site/
 │   └── index.html               # External customer page with embed <script> tag
 ├── capstone.yaml                # Evaluator run & seed manifest
@@ -163,11 +164,16 @@ flyrank-capstone-widget-platform/
 
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
+| `GET` | `/dashboard/` | None (Browser) | SPA Dashboard UI (HTML, Tailwind CSS, Vanilla JS) |
 | `GET` | `/widget.js?id={widget_id}` | None (Public) | Delivers embed JavaScript loader bundle (`Cache-Control: 86400s`) |
 | `GET` | `/api/widgets/{widget_id}/config` | None (Public) | Delivers form configuration JSON (`Cache-Control: 300s`) |
 | `POST`| `/submit/{widget_id}` | None (Public) | Accepts lead submissions (Rate limit: 10/min, Honeypot protected) |
 | `POST`| `/api/submissions/{widget_id}` | None (Public) | API alias for form submission |
 | `GET` | `/api/dashboard/stats` | `X-Api-Key` | Tenant metrics: total submissions count & geo-breakdown |
+| `GET` | `/api/v1/widgets` | `X-Api-Key` | List all widgets owned by authenticated tenant |
+| `POST`| `/api/v1/widgets` | `X-Api-Key` | Create a new embeddable widget |
+| `DELETE`| `/api/v1/widgets/{id}` | `X-Api-Key` | Soft-delete / deactivate a widget |
+| `GET` | `/api/v1/submissions` | `X-Api-Key` | List all leads captured for authenticated tenant |
 | `GET` | `/health` | None (Ops) | API liveness probe |
 
 ---

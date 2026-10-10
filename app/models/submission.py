@@ -92,6 +92,20 @@ class Submission(Base):
         comment="Extracted from data['email'] when present; enables fast email lookup",
     )
 
+    phone: Mapped[str | None] = mapped_column(
+        String(50),
+        nullable=True,
+        index=True,
+        comment="Extracted phone number from submission data",
+    )
+
+    lead_company: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
+        index=True,
+        comment="Extracted company name from submission data",
+    )
+
     ip_address: Mapped[str | None] = mapped_column(
         String(45),   # 45 chars covers full IPv6; replaces PostgreSQL INET
         nullable=True,

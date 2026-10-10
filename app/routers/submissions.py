@@ -14,6 +14,7 @@ Pipeline (executed in this exact order for every POST):
 """
 
 import logging
+from typing import Any
 import uuid as uuid_lib
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -84,6 +85,12 @@ def _get_client_ip(request: Request) -> str:
     response_description="Submission accepted",
     include_in_schema=False,
 )
+@router.post(
+    "/api/leads/{widget_id}",
+    summary="Submit a lead-capture form (Leads path)",
+    response_description="Submission accepted",
+    include_in_schema=False,
+)
 @limiter.limit("10/minute")
 async def submit_form(
     request: Request,              # must be first positional arg for slowapi
@@ -93,22 +100,17 @@ async def submit_form(
 ) -> JSONResponse:
     """Accept a form submission from an external website visitor.
 
-    This is the core public endpoint called by embed.js.  It is deliberately
+    This is the core public endpoint called by embed.js. It is deliberately
     hardened against abuse (rate limiting, honeypot) and resilient to
     downstream failures (geo-IP, side effects).
     """
 
     # ------------------------------------------------------------------
-    # Step 1 — Rate limit is enforced by the @limiter.limit decorator above.
-    # If the limit is exceeded slowapi raises RateLimitExceeded which is
-    # caught by the custom handler registered in main.py (→ 429 JSON).
+    # Step 1 — Rate limit check (handled by decorator)
     # ------------------------------------------------------------------
 
     # ------------------------------------------------------------------
     # Step 2 — Honeypot check
-    # Non-empty value means a bot filled in a hidden field.
-    # We return a convincing 200 so the bot does not know it was detected
-    # and does not change strategy or retry more aggressively.
     # ------------------------------------------------------------------
     if payload.honeypot:
         logger.info(
@@ -118,7 +120,6 @@ async def submit_form(
 
     # ------------------------------------------------------------------
     # Step 3 — Validate widget_id format
-    # A bad UUID format would cause an ugly DB error; fail fast with 404.
     # ------------------------------------------------------------------
     try:
         wid = uuid_lib.UUID(widget_id)
@@ -130,9 +131,6 @@ async def submit_form(
 
     # ------------------------------------------------------------------
     # Step 4 — Widget lookup
-    # The widget must exist AND be active.  We intentionally return the
-    # same 404 for both cases (non-existence and inactive) to avoid
-    # leaking information about whether a widget UUID is valid.
     # ------------------------------------------------------------------
     result = await db.execute(
         select(Widget).where(Widget.id == wid, Widget.is_active == True)  # noqa: E712
@@ -152,9 +150,6 @@ async def submit_form(
 
     # ------------------------------------------------------------------
     # Step 6 — Geo-enrichment (best-effort, NEVER crashes the request)
-    # The outer try/except guards against any unexpected exception from the
-    # geo module itself (e.g. an import error or a bug we haven't seen yet).
-    # get_geo_data() already catches its own network errors internally.
     # ------------------------------------------------------------------
     country_code: str | None = None
     try:
@@ -164,45 +159,61 @@ async def submit_form(
         logger.warning(
             "Unexpected error during geo-lookup for IP=%s: %s", client_ip, exc
         )
-        # country_code remains None — submission proceeds without geo tag
 
     # ------------------------------------------------------------------
-    # Step 7 — Save to DB
-    # Extract email from the submitted data as a denormalised field so
-    # the tenant can filter submissions by email without parsing JSON.
+    # Step 7 — Merge payload & extract extended B2B fields
     # ------------------------------------------------------------------
-    raw_email = payload.data.get("email")
+    form_data = dict(payload.data) if payload.data else {}
+    if hasattr(payload, "model_extra") and payload.model_extra:
+        for k, v in payload.model_extra.items():
+            if k not in ("honeypot", "widget_id") and k not in form_data:
+                form_data[k] = v
+
+    # Extract email
+    raw_email = form_data.get("email") or form_data.get("work_email") or form_data.get("contact_email")
     submitter_email: str | None = (
         str(raw_email).strip() if isinstance(raw_email, str) and raw_email.strip() else None
+    )
+
+    # Extract phone
+    raw_phone = form_data.get("phone") or form_data.get("phone_number") or form_data.get("tel") or form_data.get("telephone")
+    phone: str | None = (
+        str(raw_phone).strip() if isinstance(raw_phone, str) and raw_phone.strip() else None
+    )
+
+    # Extract company
+    raw_company = form_data.get("lead_company") or form_data.get("company") or form_data.get("company_name") or form_data.get("organization")
+    lead_company: str | None = (
+        str(raw_company).strip() if isinstance(raw_company, str) and raw_company.strip() else None
     )
 
     submission = Submission(
         widget_id=widget.id,
         tenant_id=widget.tenant_id,
-        data=payload.data,
+        data=form_data,
         submitter_email=submitter_email,
+        phone=phone,
+        lead_company=lead_company,
         ip_address=client_ip,
         country_code=country_code,
     )
     db.add(submission)
     await db.commit()
-    await db.refresh(submission)  # populate server-generated fields (id, submitted_at)
+    await db.refresh(submission)
 
     logger.info(
-        "Submission saved — id=%s widget=%s tenant=%s email=%s country=%s",
+        "Submission saved — id=%s widget=%s tenant=%s email=%s phone=%s company=%s country=%s",
         submission.id,
         widget.id,
         widget.tenant_id,
         submitter_email or "(none)",
+        phone or "(none)",
+        lead_company or "(none)",
         country_code or "(unknown)",
     )
 
     # ------------------------------------------------------------------
     # Step 8 — Safe side effect
-    # The try/except here is the single most important invariant in this
-    # pipeline: even a total failure in the notification layer MUST NOT
-    # change the HTTP response the visitor receives.  The submission is
-    # already committed to the DB at this point.
     # ------------------------------------------------------------------
     try:
         await send_webhook_or_email(submission)
@@ -215,4 +226,121 @@ async def submit_form(
     # ------------------------------------------------------------------
     # Step 9 — Return success
     # ------------------------------------------------------------------
-    return JSONResponse(content={"success": True})
+    return JSONResponse(content={"success": True, "id": str(submission.id), "data": form_data})
+
+
+@router.post(
+    "/api/leads",
+    summary="Direct lead capture endpoint",
+    response_description="Lead submission accepted",
+    responses={
+        200: {"description": "Lead accepted and enriched"},
+        400: {"description": "Missing widget identification"},
+        404: {"description": "Widget not found or inactive"},
+        429: {"description": "Rate limit exceeded"},
+    },
+)
+@limiter.limit("20/minute")
+async def capture_lead_direct(
+    request: Request,
+    payload: dict[str, Any],
+    db: AsyncSession = Depends(get_db),
+) -> JSONResponse:
+    """Accept lead data directly from custom HTML forms or B2B integrations.
+
+    Accepts arbitrary JSON payloads (name, email, phone, lead_company, budget, message, etc.)
+    either nested under `data` or as a flat JSON dictionary.
+    """
+    # 1. Honeypot trap
+    honeypot = payload.get("honeypot") or (
+        payload.get("data", {}).get("honeypot") if isinstance(payload.get("data"), dict) else ""
+    )
+    if honeypot:
+        logger.info("Direct lead honeypot triggered — silently dropped.")
+        return JSONResponse(content={"success": True})
+
+    # 2. Extract or resolve widget_id
+    raw_wid = (
+        payload.get("widget_id")
+        or request.query_params.get("widget_id")
+        or (payload.get("data", {}).get("widget_id") if isinstance(payload.get("data"), dict) else None)
+    )
+
+    widget: Widget | None = None
+    if raw_wid:
+        try:
+            wid = uuid_lib.UUID(str(raw_wid))
+            result = await db.execute(
+                select(Widget).where(Widget.id == wid, Widget.is_active == True)  # noqa: E712
+            )
+            widget = result.scalar_one_or_none()
+        except ValueError:
+            raise HTTPException(status_code=400, detail={"success": False, "error": "invalid_widget_id"})
+    else:
+        # Fallback to the most recent active widget
+        result = await db.execute(
+            select(Widget).where(Widget.is_active == True).order_by(Widget.created_at.desc()).limit(1)  # noqa: E712
+        )
+        widget = result.scalar_one_or_none()
+
+    if widget is None:
+        raise HTTPException(status_code=404, detail={"success": False, "error": "active_widget_required"})
+
+    # 3. Format form data
+    raw_data = payload.get("data")
+    if isinstance(raw_data, dict):
+        form_data = dict(raw_data)
+        for k, v in payload.items():
+            if k not in ("data", "honeypot", "widget_id") and k not in form_data:
+                form_data[k] = v
+    else:
+        form_data = {k: v for k, v in payload.items() if k not in ("honeypot", "widget_id")}
+
+    # 4. Extract standard fields
+    raw_email = form_data.get("email") or form_data.get("work_email") or form_data.get("contact_email")
+    submitter_email = str(raw_email).strip() if isinstance(raw_email, str) and raw_email.strip() else None
+
+    raw_phone = form_data.get("phone") or form_data.get("phone_number") or form_data.get("tel") or form_data.get("telephone")
+    phone = str(raw_phone).strip() if isinstance(raw_phone, str) and raw_phone.strip() else None
+
+    raw_company = form_data.get("lead_company") or form_data.get("company") or form_data.get("company_name") or form_data.get("organization")
+    lead_company = str(raw_company).strip() if isinstance(raw_company, str) and raw_company.strip() else None
+
+    # 5. Geo-enrichment
+    client_ip = _get_client_ip(request)
+    country_code: str | None = None
+    try:
+        geo_data = await get_geo_data(client_ip)
+        country_code = extract_country_code(geo_data)
+    except Exception:
+        pass
+
+    # 6. Save Submission
+    submission = Submission(
+        widget_id=widget.id,
+        tenant_id=widget.tenant_id,
+        data=form_data,
+        submitter_email=submitter_email,
+        phone=phone,
+        lead_company=lead_company,
+        ip_address=client_ip,
+        country_code=country_code,
+    )
+    db.add(submission)
+    await db.commit()
+    await db.refresh(submission)
+
+    # 7. Side effects
+    try:
+        await send_webhook_or_email(submission)
+    except Exception:
+        pass
+
+    return JSONResponse(
+        content={
+            "success": True,
+            "lead_id": str(submission.id),
+            "widget_id": str(widget.id),
+            "data": form_data,
+        }
+    )

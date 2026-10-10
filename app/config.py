@@ -36,12 +36,11 @@ class Settings(BaseSettings):
     # ------------------------------------------------------------------
     # Database
     # ------------------------------------------------------------------
-    # Async SQLite DSN.  The path is relative to the project root.
-    # Override DATABASE_URL in .env to point at a different file or use
-    # an in-memory DB for testing (sqlite+aiosqlite:///:memory:).
+    # Supports Supabase PostgreSQL (postgresql+asyncpg://...) or SQLite.
+    # Reads directly from the DATABASE_URL environment variable.
     database_url: str = Field(
         default="sqlite+aiosqlite:///./database.db",
-        description="Async SQLAlchemy DSN.  Defaults to a local SQLite file.",
+        description="Async SQLAlchemy database URL. Reads from DATABASE_URL env var. Supports PostgreSQL (Supabase) and local SQLite.",
     )
 
     # ------------------------------------------------------------------

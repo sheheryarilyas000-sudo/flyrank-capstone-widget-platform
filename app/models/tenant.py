@@ -49,6 +49,37 @@ class Tenant(Base):
         comment="Human-readable organisation name",
     )
 
+    full_name: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
+        comment="Personal full name of workspace account owner",
+    )
+
+    email: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
+        index=True,
+        comment="Primary contact email for workspace owner",
+    )
+
+    website_url: Mapped[str | None] = mapped_column(
+        String(500),
+        nullable=True,
+        comment="Company website URL",
+    )
+
+    industry: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+        comment="Business industry or sector (e.g. Tech, E-commerce, Agency, Manufacturing, Other)",
+    )
+
+    phone_number: Mapped[str | None] = mapped_column(
+        String(50),
+        nullable=True,
+        comment="Business contact phone number",
+    )
+
     # ------------------------------------------------------------------
     # Authentication
     # ------------------------------------------------------------------

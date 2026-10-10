@@ -29,7 +29,7 @@ class SubmissionCreate(BaseModel):
     """
 
     data: dict[str, Any] = Field(
-        ...,
+        default_factory=dict,
         description="Submitted form field values (key = field name, value = user input).",
         examples=[{"email": "user@example.com", "first_name": "Jane"}],
     )
@@ -44,14 +44,21 @@ class SubmissionCreate(BaseModel):
     )
 
     model_config = {
+        "extra": "allow",
         "json_schema_extra": {
             "examples": [
                 {
-                    "data": {"email": "user@example.com", "first_name": "Jane"},
+                    "data": {
+                        "email": "user@example.com",
+                        "first_name": "Jane",
+                        "phone": "+1 555-019-2834",
+                        "lead_company": "Acme Corp",
+                        "budget": "$10,000",
+                    },
                     "honeypot": "",
                 }
             ]
-        }
+        },
     }
 
 

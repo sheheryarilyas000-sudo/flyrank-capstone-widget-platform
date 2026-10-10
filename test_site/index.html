@@ -159,11 +159,12 @@
     </style>
 </head>
 <body>
+
     <div class="container">
         <div class="header">
             <span class="badge">Simulated External Website</span>
-            <h1>Acme Corp Marketing Landing</h1>
-            <p class="subtitle">This page simulates a customer's external origin site embedding the Flyrank widget platform script tag.</p>
+            <h1>Demo Client Marketing Landing</h1>
+            <p class="subtitle">This page simulates a customer's external origin site embedding the Nova Leads widget platform script tag.</p>
         </div>
 
         <div class="card">
@@ -171,7 +172,7 @@
             <form id="leadCaptureForm">
                 <div class="form-group">
                     <label for="widgetIdInput">Target Widget ID</label>
-                    <input type="text" id="widgetIdInput" placeholder="Enter active Widget UUID..." value="value="ff428c2c-2da1-4c71-a69a-72fba8ea5219" required>
+                    <input type="text" id="widgetIdInput" placeholder="Enter active Widget UUID..." value="69cb98bb-15ed-47d3-b834-fb597b50fac0" required>
                 </div>
 
                 <div class="form-group">
@@ -201,12 +202,18 @@
             <p style="font-size: 0.85rem; color: var(--text-muted);">
                 The embed bundle script tag below is loaded dynamically from the backend platform API:
             </p>
-            <pre><code>&lt;script src="http://localhost:8000/widget.js?id=ff428c2c-2da1-4c71-a69a-72fba8ea5219"&gt;&lt;/script&gt;</code></pre>
+            <pre><code>&lt;script src="/widget.js?id=69cb98bb-15ed-47d3-b834-fb597b50fac0"&gt;&lt;/script&gt;</code></pre>
+        </div>
+
+        <!-- Dedicated Dynamic Widget Embed Mounting Container -->
+        <div style="margin-top: 1.5rem;">
+            <div id="nova-leads-widget"></div>
+            <div id="leadnova-widget"></div>
         </div>
     </div>
 
     <!-- The exact required embed script tag -->
-    <script src="http://localhost:8000/widget.js?id=ff428c2c-2da1-4c71-a69a-72fba8ea5219"></script>
+    <script src="http://localhost:8000/widget.js?id=69cb98bb-15ed-47d3-b834-fb597b50fac0"></script>
 
     <script>
         // Form submission handler simulating the embed widget's fetch POST
@@ -227,8 +234,11 @@
             submitBtn.textContent = "Submitting...";
 
             try {
-                // Post to the Flyrank public submission endpoint
-                const endpoint = `http://localhost:8000/submit/${widgetId}`;
+                // Post to the Nova Leads public submission endpoint
+                const apiBase = (window.location.protocol === 'file:' || !window.location.origin || window.location.origin === 'null')
+                    ? 'http://localhost:8000'
+                    : window.location.origin;
+                const endpoint = `${apiBase}/submit/${widgetId}`;
                 const response = await fetch(endpoint, {
                     method: "POST",
                     headers: {
@@ -254,7 +264,7 @@
                 }
             } catch (err) {
                 statusBox.className = "status-box status-error";
-                statusBox.innerHTML = `<strong>Network / CORS Error:</strong> ${err.message}. Ensure the FastAPI server is running at http://localhost:8000.`;
+                statusBox.innerHTML = `<strong>Network / CORS Error:</strong> ${err.message}. Ensure the API server is reachable.`;
             } finally {
                 statusBox.style.display = "block";
                 submitBtn.disabled = false;

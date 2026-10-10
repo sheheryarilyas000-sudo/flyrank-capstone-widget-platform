@@ -10,6 +10,9 @@ All ORM models inherit from `Base`.
 All route handlers receive an async DB session via the `get_db` dependency.
 """
 
+import os
+import logging
+import re
 from collections.abc import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import (
@@ -21,21 +24,67 @@ from sqlalchemy.orm import DeclarativeBase
 
 from app.config import get_settings
 
+logger = logging.getLogger(__name__)
 settings = get_settings()
+
+
+def get_engine_configuration(raw_url: str) -> tuple[str, dict, dict]:
+    """Normalize DATABASE_URL and configure driver-specific engine parameters.
+
+    Supports:
+      1. Serverless PostgreSQL (Supabase / Neon): handles 'postgres://' and 'postgresql://' prefixes,
+         normalizes to 'postgresql+asyncpg://', configures SSL and serverless pooling.
+      2. Local SQLite fallback (aiosqlite): only if DATABASE_URL is not set.
+    """
+    url = raw_url
+
+    # Convert standard PostgreSQL URLs to asyncpg dialect
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql+asyncpg://", 1)
+    elif url.startswith("postgresql://") and not url.startswith("postgresql+"):
+        url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+
+    connect_args: dict = {}
+    engine_kwargs: dict = {
+        "echo": (settings.app_env == "development"),
+        "pool_pre_ping": True,  # Discards stale connections on serverless / Supabase pooler
+    }
+
+    if "sqlite" in url:
+        connect_args["check_same_thread"] = False
+    else:
+        # PostgreSQL (Supabase / Neon / AWS RDS)
+        # Strip sslmode= from query string if present because asyncpg expects ssl in connect_args
+        if "sslmode=" in url:
+            url = re.sub(r"([?&])sslmode=[^&]+(&?)", r"\1\2", url).rstrip("?&")
+            connect_args["ssl"] = "require"
+        elif any(host in url for host in ("supabase.co", "pooler.supabase.com", "neon.tech")):
+            connect_args["ssl"] = "require"
+
+        # Serverless connection pool tuning
+        engine_kwargs["pool_size"] = int(os.getenv("DB_POOL_SIZE", "5"))
+        engine_kwargs["max_overflow"] = int(os.getenv("DB_MAX_OVERFLOW", "10"))
+        engine_kwargs["pool_recycle"] = 300
+
+    return url, connect_args, engine_kwargs
+
 
 # ---------------------------------------------------------------------------
 # Engine
+# Priority: os.getenv("DATABASE_URL") -> POSTGRES_URL -> SUPABASE_DB_URL -> settings.database_url
 # ---------------------------------------------------------------------------
-# SQLite-specific notes:
-#   - `check_same_thread=False` is required because SQLAlchemy's async engine
-#     may hand connections between threads internally.
-#   - Connection pooling is disabled (StaticPool / NullPool not needed for
-#     aiosqlite; SQLAlchemy handles this automatically for SQLite).
-#   - echo=True in development logs every SQL statement to stdout.
+raw_db_url = (
+    os.getenv("DATABASE_URL")
+    or os.getenv("POSTGRES_URL")
+    or os.getenv("SUPABASE_DB_URL")
+    or getattr(settings, "database_url", "sqlite+aiosqlite:///./database.db")
+)
+db_url, connect_args, engine_kwargs = get_engine_configuration(raw_db_url)
+
 engine = create_async_engine(
-    settings.database_url,
-    echo=(settings.app_env == "development"),
-    connect_args={"check_same_thread": False},
+    db_url,
+    connect_args=connect_args,
+    **engine_kwargs,
 )
 
 # ---------------------------------------------------------------------------
